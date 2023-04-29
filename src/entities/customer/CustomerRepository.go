@@ -7,6 +7,7 @@ import (
 type CustomerRepository interface {
 	FindAll() []CustomerModel
 	FindOne(id int) CustomerModel
+	FindByEmailAndPassword(email string, password string) CustomerModel
 	Save(customer CustomerModel) (*CustomerModel, error)
 	Update(customer CustomerModel) (*CustomerModel, error)
 	Delete(customer CustomerModel) (*CustomerModel, error)
@@ -32,6 +33,13 @@ func (ur *CustomerRepositoryImpl) FindAll() []CustomerModel {
 func (ur *CustomerRepositoryImpl) FindOne(id int) CustomerModel {
 	var customer CustomerModel
 	_ = ur.db.Preload("Orders.OrderDetails.Product").Find(&customer, id)
+
+	return customer
+}
+
+func (ur *CustomerRepositoryImpl) FindByEmailAndPassword(email string, password string) CustomerModel {
+	var customer CustomerModel
+	_ = ur.db.Where("email", email).Where("password", password).Find(&customer)
 
 	return customer
 }

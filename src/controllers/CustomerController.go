@@ -11,6 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 	golangjwt "github.com/golang-jwt/jwt"
 	customer "skyshi.com/src/entities/customer"
+	customerdto "skyshi.com/src/entities/customer/dto"
 	order "skyshi.com/src/entities/order"
 )
 
@@ -32,6 +33,29 @@ func (uc *CustomerController) Authenticate(ctx *gin.Context) {
 	token := golangjwt.New(golangjwt.SigningMethodHS256)
 
 	claims := token.Claims.(golangjwt.MapClaims)
+
+	var input customerdto.CustomerAuthenticateDto
+
+	if err := ctx.ShouldBindJSON(&input); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"status":  "Error",
+			"message": err.Error(),
+		})
+
+		return 
+	}
+
+	var customer = uc.customerService.GetByEmailAndPassword(input.Email, input.Password);
+
+	if customer.ID < 1 {
+		ctx.JSON(http.StatusNotFound, gin.H{
+			"status":  "Error",
+			"message": "Customer not found",
+		})
+
+		return 
+	}
+
 	claims["id"] = 1
 	claims["exp"] = time.Now().Second() * 3600 * 12
 

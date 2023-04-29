@@ -12,6 +12,7 @@ import (
 type CustomerService interface {
 	GetAll() []CustomerModel
 	GetByID(id int) CustomerModel
+	GetByEmailAndPassword(email string, password string) CustomerModel
 	Create(ctx *gin.Context) (*CustomerModel, error)
 	Update(ctx *gin.Context) (*CustomerModel, error)
 	Delete(ctx *gin.Context) (*CustomerModel, error)
@@ -31,6 +32,10 @@ func (us *CustomerServiceImpl) GetAll() []CustomerModel {
 
 func (us *CustomerServiceImpl) GetByID(id int) CustomerModel {
 	return us.customerRepository.FindOne(id)
+}
+
+func (us *CustomerServiceImpl) GetByEmailAndPassword(email string, password string) CustomerModel {
+	return us.customerRepository.FindByEmailAndPassword(email, password)
 }
 
 func (us *CustomerServiceImpl) Create(ctx *gin.Context) (*CustomerModel, error) {
