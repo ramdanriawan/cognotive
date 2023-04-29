@@ -51,6 +51,24 @@ func (uc *OrderController) Index(ctx *gin.Context) {
 }
 
 func (uc *OrderController) GetByID(ctx *gin.Context) {
+	admin_token := ctx.Query("admin_token")
+
+	user_id := int(uc.decodeUserIdByToken(admin_token))
+
+	if user_id != 0 {
+
+		type DayAndTime struct {
+		}
+
+		ctx.JSON(http.StatusNotFound, gin.H{
+			"status":  "Error",
+			"message": "Admin token not found!",
+			"data":    DayAndTime{},
+		})
+
+		return
+	}
+
 	id, _ := strconv.Atoi(ctx.Param("id"))
 	data := uc.orderservice.GetByID(int(id))
 
@@ -80,6 +98,11 @@ func (uc *OrderController) decodeUserIdByToken(user_token string) int {
 	parsedToken, _ := jwt.Parse(user_token, nil)
 
 	claims, _ := parsedToken.Claims.(jwt.MapClaims)
+
+	if claims["id"] == nil {
+		return -1;
+	}
+
 	id := claims["id"].(float64)
 
 	return int(id)
@@ -114,6 +137,23 @@ func (uc *OrderController) GetByCustomer(ctx *gin.Context) {
 }
 
 func (uc *OrderController) Create(ctx *gin.Context) {
+	admin_token := ctx.Query("admin_token")
+
+	user_id := int(uc.decodeUserIdByToken(admin_token))
+
+	if user_id != 0 {
+
+		type DayAndTime struct {
+		}
+
+		ctx.JSON(http.StatusNotFound, gin.H{
+			"status":  "Error",
+			"message": "Admin token not found!",
+			"data":    DayAndTime{},
+		})
+
+		return
+	}
 
 	data, err := uc.orderservice.Create(ctx)
 
@@ -150,6 +190,23 @@ func (uc *OrderController) Create(ctx *gin.Context) {
 }
 
 func (uc *OrderController) Update(ctx *gin.Context) {
+	admin_token := ctx.Query("admin_token")
+
+	user_id := int(uc.decodeUserIdByToken(admin_token))
+
+	if user_id != 0 {
+
+		type DayAndTime struct {
+		}
+
+		ctx.JSON(http.StatusNotFound, gin.H{
+			"status":  "Error",
+			"message": "Admin token not found!",
+			"data":    DayAndTime{},
+		})
+
+		return
+	}
 	id, _ := strconv.Atoi(ctx.Param("id"))
 	orderModel := uc.orderservice.GetByID(int(id))
 
@@ -221,6 +278,23 @@ func (uc *OrderController) Complete(ctx *gin.Context) {
 }
 
 func (uc *OrderController) Delete(ctx *gin.Context) {
+	admin_token := ctx.Query("admin_token")
+
+	user_id := int(uc.decodeUserIdByToken(admin_token))
+
+	if user_id != 0 {
+
+		type DayAndTime struct {
+		}
+
+		ctx.JSON(http.StatusNotFound, gin.H{
+			"status":  "Error",
+			"message": "Admin token not found!",
+			"data":    DayAndTime{},
+		})
+
+		return
+	}
 	id, _ := strconv.Atoi(ctx.Param("id"))
 	orderModel := uc.orderservice.GetByID(int(id))
 

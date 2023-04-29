@@ -2,25 +2,57 @@ package controllers
 
 import (
 	"fmt"
-	"net/http"
-	"strconv"
-	"strings"
 	"github.com/gin-gonic/gin"
+	"net/http"
 	customer "skyshi.com/src/entities/customer"
 	product "skyshi.com/src/entities/product"
+	"github.com/dgrijalva/jwt-go"
+	"strconv"
+	"strings"
 )
 
 type ProductController struct {
-	productservice product.Productservice
+	productservice  product.Productservice
 	customerservice customer.CustomerService
-	ctx            *gin.Context
+	ctx             *gin.Context
 }
 
 func NewProductController(productservice product.Productservice, customerservice customer.CustomerService, ctx *gin.Context) ProductController {
 	return ProductController{productservice, customerservice, ctx}
 }
 
+func (uc *ProductController) decodeUserIdByToken(user_token string) int {
+	parsedToken, _ := jwt.Parse(user_token, nil)
+
+	claims, _ := parsedToken.Claims.(jwt.MapClaims)
+
+	if claims["id"] == nil {
+		return -1;
+	}
+
+	id := claims["id"].(float64)
+
+	return int(id)
+}
+
 func (uc *ProductController) Index(ctx *gin.Context) {
+	admin_token := ctx.Query("admin_token")
+
+	user_id := int(uc.decodeUserIdByToken(admin_token))
+
+	if user_id != 0 {
+
+		type DayAndTime struct {
+		}
+
+		ctx.JSON(http.StatusNotFound, gin.H{
+			"status":  "Error",
+			"message": "Admin token not found!",
+			"data":    DayAndTime{},
+		})
+
+		return
+	}
 
 	type DayAndTime struct {
 	}
@@ -35,6 +67,24 @@ func (uc *ProductController) Index(ctx *gin.Context) {
 }
 
 func (uc *ProductController) GetByID(ctx *gin.Context) {
+	admin_token := ctx.Query("admin_token")
+
+	user_id := int(uc.decodeUserIdByToken(admin_token))
+
+	if user_id != 0 {
+
+		type DayAndTime struct {
+		}
+
+		ctx.JSON(http.StatusNotFound, gin.H{
+			"status":  "Error",
+			"message": "Admin token not found!",
+			"data":    DayAndTime{},
+		})
+
+		return
+	}
+
 	id, _ := strconv.Atoi(ctx.Param("id"))
 	data := uc.productservice.GetByID(int64(id))
 
@@ -61,6 +111,23 @@ func (uc *ProductController) GetByID(ctx *gin.Context) {
 }
 
 func (uc *ProductController) Create(ctx *gin.Context) {
+	admin_token := ctx.Query("admin_token")
+
+	user_id := int(uc.decodeUserIdByToken(admin_token))
+
+	if user_id != 0 {
+
+		type DayAndTime struct {
+		}
+
+		ctx.JSON(http.StatusNotFound, gin.H{
+			"status":  "Error",
+			"message": "Admin token not found!",
+			"data":    DayAndTime{},
+		})
+
+		return
+	}
 
 	data, err := uc.productservice.Create(ctx)
 
@@ -97,6 +164,24 @@ func (uc *ProductController) Create(ctx *gin.Context) {
 }
 
 func (uc *ProductController) Update(ctx *gin.Context) {
+	admin_token := ctx.Query("admin_token")
+
+	user_id := int(uc.decodeUserIdByToken(admin_token))
+
+	if user_id != 0 {
+
+		type DayAndTime struct {
+		}
+
+		ctx.JSON(http.StatusNotFound, gin.H{
+			"status":  "Error",
+			"message": "Admin token not found!",
+			"data":    DayAndTime{},
+		})
+
+		return
+	}
+
 	id, _ := strconv.Atoi(ctx.Param("id"))
 	productModel := uc.productservice.GetByID(int64(id))
 
@@ -133,6 +218,24 @@ func (uc *ProductController) Update(ctx *gin.Context) {
 }
 
 func (uc *ProductController) Delete(ctx *gin.Context) {
+	admin_token := ctx.Query("admin_token")
+
+	user_id := int(uc.decodeUserIdByToken(admin_token))
+
+	if user_id != 0 {
+
+		type DayAndTime struct {
+		}
+
+		ctx.JSON(http.StatusNotFound, gin.H{
+			"status":  "Error",
+			"message": "Admin token not found!",
+			"data":    DayAndTime{},
+		})
+
+		return
+	}
+
 	id, _ := strconv.Atoi(ctx.Param("id"))
 	productModel := uc.productservice.GetByID(int64(id))
 

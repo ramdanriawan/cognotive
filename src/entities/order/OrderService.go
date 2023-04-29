@@ -67,6 +67,10 @@ func (us *OrderserviceImpl) Create(ctx *gin.Context) (*OrderModel, error) {
 
 	result, err := us.orderRepository.Save(order)
 
+	if err != nil {
+		return nil, err
+	}
+
 	var orderdetailsdata []orderdetails.OrderDetailModel
 
 	for i := 0; i < len(input.OrderDetailsCreate); i++ {

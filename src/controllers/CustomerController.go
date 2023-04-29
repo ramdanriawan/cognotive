@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	customer "skyshi.com/src/entities/customer"
 	order "skyshi.com/src/entities/order"
@@ -23,7 +24,38 @@ func NewCustomerController(customerService customer.CustomerService, orderservic
 	return CustomerController{customerService, orderservice, orderRepository, orderRepositoryImpl, ctx}
 }
 
+func (uc *CustomerController) decodeUserIdByToken(user_token string) int {
+	parsedToken, _ := jwt.Parse(user_token, nil)
+
+	claims, _ := parsedToken.Claims.(jwt.MapClaims)
+
+	if claims["id"] == nil {
+		return -1;
+	}
+
+	id := claims["id"].(float64)
+
+	return int(id)
+}
+
 func (uc *CustomerController) Index(ctx *gin.Context) {
+	admin_token := ctx.Query("admin_token")
+
+	user_id := int(uc.decodeUserIdByToken(admin_token))
+
+	if user_id != 0 {
+
+		type DayAndTime struct {
+		}
+
+		ctx.JSON(http.StatusNotFound, gin.H{
+			"status":  "Error",
+			"message": "Admin token not found!",
+			"data":    DayAndTime{},
+		})
+
+		return
+	}
 
 	data := uc.customerService.GetAll()
 
@@ -35,6 +67,24 @@ func (uc *CustomerController) Index(ctx *gin.Context) {
 }
 
 func (uc *CustomerController) GetByID(ctx *gin.Context) {
+	admin_token := ctx.Query("admin_token")
+
+	user_id := int(uc.decodeUserIdByToken(admin_token))
+
+	if user_id != 0 {
+
+		type DayAndTime struct {
+		}
+
+		ctx.JSON(http.StatusNotFound, gin.H{
+			"status":  "Error",
+			"message": "Admin token not found!",
+			"data":    DayAndTime{},
+		})
+
+		return
+	}
+
 	id, _ := strconv.Atoi(ctx.Param("id"))
 	data := uc.customerService.GetByID(id)
 
@@ -58,6 +108,24 @@ func (uc *CustomerController) GetByID(ctx *gin.Context) {
 }
 
 func (uc *CustomerController) Create(ctx *gin.Context) {
+	admin_token := ctx.Query("admin_token")
+
+	user_id := int(uc.decodeUserIdByToken(admin_token))
+
+	if user_id != 0 {
+
+		type DayAndTime struct {
+		}
+
+		ctx.JSON(http.StatusNotFound, gin.H{
+			"status":  "Error",
+			"message": "Admin token not found!",
+			"data":    DayAndTime{},
+		})
+
+		return
+	}
+
 	data, err := uc.customerService.Create(ctx)
 
 	if err != nil {
@@ -87,6 +155,24 @@ func (uc *CustomerController) Create(ctx *gin.Context) {
 }
 
 func (uc *CustomerController) Update(ctx *gin.Context) {
+	admin_token := ctx.Query("admin_token")
+
+	user_id := int(uc.decodeUserIdByToken(admin_token))
+
+	if user_id != 0 {
+
+		type DayAndTime struct {
+		}
+
+		ctx.JSON(http.StatusNotFound, gin.H{
+			"status":  "Error",
+			"message": "Admin token not found!",
+			"data":    DayAndTime{},
+		})
+
+		return
+	}
+
 	id, _ := strconv.Atoi(ctx.Param("id"))
 	customerModel := uc.customerService.GetByID(id)
 
@@ -123,10 +209,27 @@ func (uc *CustomerController) Update(ctx *gin.Context) {
 }
 
 func (uc *CustomerController) Delete(ctx *gin.Context) {
+	admin_token := ctx.Query("admin_token")
+
+	user_id := int(uc.decodeUserIdByToken(admin_token))
+
+	if user_id != 0 {
+
+		type DayAndTime struct {
+		}
+
+		ctx.JSON(http.StatusNotFound, gin.H{
+			"status":  "Error",
+			"message": "Admin token not found!",
+			"data":    DayAndTime{},
+		})
+
+		return
+	}
+
 	id, _ := strconv.Atoi(ctx.Param("id"))
 	customerModel := uc.customerService.GetByID(id)
-	fmt.Println(id)
-	fmt.Println("idsdfojdsfjdlsfjdklsfjkdsjfdiklshjfklidshfkldshfjkdhsfjkhsdfjkhsdjkfghdjksfgdjksgfhjdsf")
+
 	if customerModel.ID < 1 {
 		ctx.JSON(404, gin.H{
 			"status":  "Not Found",
