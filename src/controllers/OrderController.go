@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
@@ -100,7 +101,14 @@ func (uc *OrderController) decodeUserIdByToken(user_token string) int {
 	claims, _ := parsedToken.Claims.(jwt.MapClaims)
 
 	if claims["id"] == nil {
-		return -1;
+		return -1
+	}
+
+	exp := claims["exp"].(float64)
+
+	// expired
+	if exp < float64(time.Now().Year()+time.Now().YearDay()+time.Now().Hour()) {
+		return -2
 	}
 
 	id := claims["id"].(float64)
@@ -111,6 +119,15 @@ func (uc *OrderController) decodeUserIdByToken(user_token string) int {
 func (uc *OrderController) GetByCustomer(ctx *gin.Context) {
 	user_token := ctx.Query("user_token")
 	user_id := int(uc.decodeUserIdByToken(user_token))
+
+	if user_id == -2 {
+		ctx.JSON(http.StatusNotFound, gin.H{
+			"status":  "Not Found",
+			"message": "Token Expired, please re-authenticate!",
+		})
+
+		return
+	}
 
 	data := uc.orderservice.GetByCustomerId(user_id)
 

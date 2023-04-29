@@ -57,7 +57,7 @@ func (uc *CustomerController) Authenticate(ctx *gin.Context) {
 	}
 
 	claims["id"] = customer.ID
-	claims["exp"] = time.Now().Second() * 3600 * 12
+	claims["exp"] = time.Now().Year() + time.Now().YearDay() + time.Now().Hour() + 1
 
 	tokenString, err := token.SignedString(sampleSecretKey)
 
@@ -86,11 +86,12 @@ func (uc *CustomerController) decodeUserIdByToken(user_token string) int {
 		return -1
 	}
 
-	// exp := claims["exp"].(float64)
+	exp := claims["exp"].(float64)
 
-	// if exp < float64(time.Now().Second()*3600*12) {
-	// 	return -1
-	// }
+	// expired
+	if exp < float64(time.Now().Year()+time.Now().YearDay()+time.Now().Hour()) {
+		return -2
+	}
 
 	id := claims["id"].(float64)
 

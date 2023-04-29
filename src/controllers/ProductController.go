@@ -2,13 +2,15 @@ package controllers
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"net/http"
-	customer "skyshi.com/src/entities/customer"
-	product "skyshi.com/src/entities/product"
-	"github.com/dgrijalva/jwt-go"
 	"strconv"
 	"strings"
+	"time"
+
+	"github.com/dgrijalva/jwt-go"
+	"github.com/gin-gonic/gin"
+	customer "skyshi.com/src/entities/customer"
+	product "skyshi.com/src/entities/product"
 )
 
 type ProductController struct {
@@ -27,7 +29,14 @@ func (uc *ProductController) decodeUserIdByToken(user_token string) int {
 	claims, _ := parsedToken.Claims.(jwt.MapClaims)
 
 	if claims["id"] == nil {
-		return -1;
+		return -1
+	}
+
+	exp := claims["exp"].(float64)
+
+	// expired
+	if exp < float64(time.Now().Year() + time.Now().YearDay() + time.Now().Hour()) {
+		return -2
 	}
 
 	id := claims["id"].(float64)
