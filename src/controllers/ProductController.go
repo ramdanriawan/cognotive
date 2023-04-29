@@ -49,7 +49,7 @@ func (uc *ProductController) Index(ctx *gin.Context) {
 
 	user_id := int(uc.decodeUserIdByToken(admin_token))
 
-	if user_id != 0 {
+	if user_id < 0 {
 
 		type DayAndTime struct {
 		}
@@ -80,7 +80,7 @@ func (uc *ProductController) GetByID(ctx *gin.Context) {
 
 	user_id := int(uc.decodeUserIdByToken(admin_token))
 
-	if user_id != 0 {
+	if user_id < 0 {
 
 		type DayAndTime struct {
 		}
@@ -124,7 +124,7 @@ func (uc *ProductController) Create(ctx *gin.Context) {
 
 	user_id := int(uc.decodeUserIdByToken(admin_token))
 
-	if user_id != 0 {
+	if user_id < 0 {
 
 		type DayAndTime struct {
 		}
@@ -177,7 +177,7 @@ func (uc *ProductController) Update(ctx *gin.Context) {
 
 	user_id := int(uc.decodeUserIdByToken(admin_token))
 
-	if user_id != 0 {
+	if user_id < 0 {
 
 		type DayAndTime struct {
 		}
@@ -231,7 +231,7 @@ func (uc *ProductController) Delete(ctx *gin.Context) {
 
 	user_id := int(uc.decodeUserIdByToken(admin_token))
 
-	if user_id != 0 {
+	if user_id < 0 {
 
 		type DayAndTime struct {
 		}

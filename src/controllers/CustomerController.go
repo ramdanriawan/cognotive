@@ -47,7 +47,7 @@ func (uc *CustomerController) Authenticate(ctx *gin.Context) {
 
 	var customer = uc.customerService.GetByEmailAndPassword(input.Email, input.Password)
 
-	if customer.ID < 1 {
+	if customer.Email == "" {
 		ctx.JSON(http.StatusNotFound, gin.H{
 			"status":  "Error",
 			"message": "Customer not found",
@@ -103,7 +103,7 @@ func (uc *CustomerController) Index(ctx *gin.Context) {
 
 	user_id := int(uc.decodeUserIdByToken(admin_token))
 
-	if user_id != 0 {
+	if user_id < 0 {
 
 		type DayAndTime struct {
 		}
@@ -131,7 +131,7 @@ func (uc *CustomerController) GetByID(ctx *gin.Context) {
 
 	user_id := int(uc.decodeUserIdByToken(admin_token))
 
-	if user_id != 0 {
+	if user_id < 0 {
 
 		type DayAndTime struct {
 		}
@@ -169,7 +169,7 @@ func (uc *CustomerController) Create(ctx *gin.Context) {
 
 	user_id := int(uc.decodeUserIdByToken(admin_token))
 
-	if user_id != 0 {
+	if user_id < 0 {
 
 		type DayAndTime struct {
 		}
@@ -216,7 +216,7 @@ func (uc *CustomerController) Update(ctx *gin.Context) {
 
 	user_id := int(uc.decodeUserIdByToken(admin_token))
 
-	if user_id != 0 {
+	if user_id < 0 {
 
 		type DayAndTime struct {
 		}
@@ -270,7 +270,7 @@ func (uc *CustomerController) Delete(ctx *gin.Context) {
 
 	user_id := int(uc.decodeUserIdByToken(admin_token))
 
-	if user_id != 0 {
+	if user_id < 0 {
 
 		type DayAndTime struct {
 		}
