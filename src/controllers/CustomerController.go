@@ -42,10 +42,10 @@ func (uc *CustomerController) Authenticate(ctx *gin.Context) {
 			"message": err.Error(),
 		})
 
-		return 
+		return
 	}
 
-	var customer = uc.customerService.GetByEmailAndPassword(input.Email, input.Password);
+	var customer = uc.customerService.GetByEmailAndPassword(input.Email, input.Password)
 
 	if customer.ID < 1 {
 		ctx.JSON(http.StatusNotFound, gin.H{
@@ -53,10 +53,10 @@ func (uc *CustomerController) Authenticate(ctx *gin.Context) {
 			"message": "Customer not found",
 		})
 
-		return 
+		return
 	}
 
-	claims["id"] = 1
+	claims["id"] = customer.ID
 	claims["exp"] = time.Now().Second() * 3600 * 12
 
 	tokenString, err := token.SignedString(sampleSecretKey)
@@ -81,10 +81,18 @@ func (uc *CustomerController) decodeUserIdByToken(user_token string) int {
 	parsedToken, _ := jwt.Parse(user_token, nil)
 
 	claims, _ := parsedToken.Claims.(jwt.MapClaims)
-	fmt.Println(claims)
+	
 	if claims["id"] == nil {
 		return -1
 	}
+
+	// var theExpired, err = time.Parse("2006-Jan-02", claims["exp"]);
+	
+	// if err != nil {
+	// 	return -1
+	// }
+
+	
 
 	id := claims["id"].(float64)
 
