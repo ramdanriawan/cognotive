@@ -4,3 +4,6 @@
 3. open terminal and run command -> go get gorm.io/gorm github.com/gin-gonic/gin gorm.io/driver/mysql github.com/go-playground/validator/v10
 4. open a terminal and run the command go run main.go
 5. Dokumentastion link API : https://documenter.getpostman.com/view/6597551/2s93eSZFA3
+
+6. cron to run at midnight everyday and send email in file main.go
+7. rate limiter in main.go and in file src/routes/api.go
