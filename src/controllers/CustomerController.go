@@ -5,9 +5,11 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
+	golangjwt "github.com/golang-jwt/jwt"
 	customer "skyshi.com/src/entities/customer"
 	order "skyshi.com/src/entities/order"
 )
@@ -24,13 +26,40 @@ func NewCustomerController(customerService customer.CustomerService, orderservic
 	return CustomerController{customerService, orderservice, orderRepository, orderRepositoryImpl, ctx}
 }
 
+func (uc *CustomerController) Authenticate(ctx *gin.Context) {
+	var sampleSecretKey = []byte("SecretYouShouldHide")
+
+	token := golangjwt.New(golangjwt.SigningMethodHS256)
+
+	claims := token.Claims.(golangjwt.MapClaims)
+	claims["id"] = 1
+	claims["exp"] = time.Now().Second() * 3600 * 12
+
+	tokenString, err := token.SignedString(sampleSecretKey)
+
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"status":  "Error",
+			"message": err.Error(),
+		})
+
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"status":  "Success",
+		"message": "Success",
+		"data":    tokenString,
+	})
+}
+
 func (uc *CustomerController) decodeUserIdByToken(user_token string) int {
 	parsedToken, _ := jwt.Parse(user_token, nil)
 
 	claims, _ := parsedToken.Claims.(jwt.MapClaims)
-
+	fmt.Println(claims)
 	if claims["id"] == nil {
-		return -1;
+		return -1
 	}
 
 	id := claims["id"].(float64)
@@ -87,9 +116,6 @@ func (uc *CustomerController) GetByID(ctx *gin.Context) {
 
 	id, _ := strconv.Atoi(ctx.Param("id"))
 	data := uc.customerService.GetByID(id)
-
-	fmt.Println(id)
-	fmt.Println("53636345635346346334524525")
 
 	if data.ID == 0 {
 		ctx.JSON(404, gin.H{

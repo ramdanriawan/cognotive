@@ -37,6 +37,7 @@ func Api(router *gin.Engine, db *gorm.DB, mw gin.HandlerFunc) {
 	v1 := router.Group("/")
 	{
 
+		v1.POST("customer/authenticate", mw, customerController.Authenticate)
 		v1.GET("customer", mw, customerController.Index)
 		v1.POST("customer", mw, customerController.Create)
 		v1.GET("customer/:id", mw, customerController.GetByID)
