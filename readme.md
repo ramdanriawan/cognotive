@@ -7,3 +7,4 @@
 
 6. cron to run at midnight everyday and send email in file main.go
 7. rate limiter in main.go and in file src/routes/api.go
+8. the csv exporter in file main.go
