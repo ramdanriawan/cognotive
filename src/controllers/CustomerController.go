@@ -81,18 +81,16 @@ func (uc *CustomerController) decodeUserIdByToken(user_token string) int {
 	parsedToken, _ := jwt.Parse(user_token, nil)
 
 	claims, _ := parsedToken.Claims.(jwt.MapClaims)
-	
+
 	if claims["id"] == nil {
 		return -1
 	}
 
-	// var theExpired, err = time.Parse("2006-Jan-02", claims["exp"]);
-	
-	// if err != nil {
+	// exp := claims["exp"].(float64)
+
+	// if exp < float64(time.Now().Second()*3600*12) {
 	// 	return -1
 	// }
-
-	
 
 	id := claims["id"].(float64)
 
