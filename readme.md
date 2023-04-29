@@ -10,3 +10,4 @@
 8. the csv exporter in file main.go (example csv exported is data.csv, u can see in this folder)
 9. to get by user_token (customer token) / admin_token u can see in documentation link api
 10. customer token i only create for /order/get-by-customer, and all for admin_token (admin request)
+11. design system is: Repository design pattern
