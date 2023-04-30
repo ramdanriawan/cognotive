@@ -1,3 +1,5 @@
+for fast run, u can click app.exe (windows os), or u can open terminal with this folder root and type ./app.cmd
+
 0. Make sure mysql is installed & running, create a database called cognotive, and import the cognotive.sql database file in this folder (if u not import & setting, the database is using on my vps database /  my online database).
 1. Make sure golang is installed, if it hasn't been installed according to your OS, for windows download & install at the link: https://go.dev/dl/go1.20.3.windows-amd64.msi
 2. database settings are in the src/config/connection.go folder
